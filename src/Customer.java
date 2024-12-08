@@ -13,8 +13,6 @@ public class Customer implements Runnable {
     public void run() {
         for (int i = 0; i < quantity; i++) {
             Ticket ticket = ticketPool.buyTicket();
-            System.out.println("Ticket bought by " + Thread.currentThread().getName() + ". Ticket is " + ticket);
-
             try {
                Thread.sleep(customerRetrievalRate * 1000);
             } catch (InterruptedException e) {
