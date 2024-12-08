@@ -3,8 +3,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class TicketPool {
-    private List<Ticket> ticketList;
-    private int maximumCapacity;
+    private final List<Ticket> ticketList;
+    private final int maximumCapacity;
 
     public TicketPool(int maximumCapacity) {
         this.maximumCapacity = maximumCapacity;
@@ -12,36 +12,41 @@ public class TicketPool {
     }
 
     public synchronized void addTicket(Ticket ticket) {
-        while (ticketList.size() >= maximumCapacity ) {
+        while (ticketList.size() >= maximumCapacity) {
             try {
+                System.out.println(Thread.currentThread().getName() + " waiting to add ticket. Pool is full.");
                 wait();
             } catch (InterruptedException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e.getMessage());
+                Thread.currentThread().interrupt(); // Preserve interrupt status
+                System.err.println("Thread interrupted while adding ticket: " + e.getMessage());
+                return;
             }
         }
 
-        this.ticketList.add(ticket);
-        notifyAll();
-        System.out.println(Thread.currentThread().getName() + " has added a ticket to the pool. Current size is " + ticketList.size());
+        ticketList.add(ticket);
+        System.out.println(Thread.currentThread().getName() + " added a ticket. Pool size: " + ticketList.size());
+        notifyAll(); // Notify waiting threads
     }
 
     public synchronized Ticket buyTicket() {
         while (ticketList.isEmpty()) {
             try {
+                System.out.println(Thread.currentThread().getName() + " waiting to buy ticket. Pool is empty.");
                 wait();
-                System.out.println(".");
             } catch (InterruptedException e) {
-                throw new RuntimeException(e.getMessage());
+                Thread.currentThread().interrupt(); // Preserve interrupt status
+                System.err.println("Thread interrupted while buying ticket: " + e.getMessage());
+                return null;
             }
         }
 
         Ticket ticket = ticketList.remove(0);
-        notifyAll();
-        System.out.println(Thread.currentThread().getName() + " has bought a ticket. "+ ticket + " - Current size is " + ticketList.size());
-
+        System.out.println(Thread.currentThread().getName() + " bought ticket: " + ticket);
+        notifyAll(); // Notify waiting threads
         return ticket;
     }
 
-
+    public synchronized int getCurrentSize() {
+        return ticketList.size();
+    }
 }

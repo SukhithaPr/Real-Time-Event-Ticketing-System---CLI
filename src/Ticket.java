@@ -37,6 +37,7 @@ public class Ticket {
 
     @Override
     public String toString() {
-        return "( " + "Ticket Id: " + ticketid + " | " + eventName + ", " + "Rs."+ticketPrice + " )";
+        return "( " + "Ticket Id: " +
+                ticketid + " | " + eventName + ", " + "Rs."+ticketPrice + " )";
     }
 }

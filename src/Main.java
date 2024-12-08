@@ -39,11 +39,10 @@ public class Main {
         TicketPool ticketPool = new TicketPool(maximumCapacity);
 
         initializeThreads(ticketPool);
-        commandLoop(ticketPool);
+        commandLoop();
     }
 
     private static boolean validateInputs() {
-        // All inputs are already validated as positive integers
         return totalTickets > 0 && ticketReleaseRate > 0 && customerRetrievalRate > 0 && maximumCapacity > 0;
     }
 
@@ -54,12 +53,12 @@ public class Main {
             try {
                 value = Integer.parseInt(scanner.nextLine().trim());
                 if (value > 0) {
-                    return value; // Valid positive integer
+                    return value;
                 } else {
-                    System.out.println("Error: Please enter a positive number.");
+                    System.out.println("Please enter a positive number");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Error: Invalid input. Please enter a positive integer.");
+                System.out.println("Please enter a positive integer");
             }
         }
     }
@@ -78,12 +77,12 @@ public class Main {
         }
     }
 
-    private static void commandLoop(TicketPool ticketPool) {
+    private static void commandLoop() {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
             System.out.print("Enter command (start/stop): ");
-            String command = scanner.nextLine().toLowerCase();
+            String command = scanner.nextLine().toLowerCase().trim(); // Trim extra whitespace for safety
 
             switch (command) {
                 case "start":
@@ -93,7 +92,7 @@ public class Main {
                     } else {
                         System.out.println("The system is already running.");
                     }
-                    break;
+                     break;
                 case "stop":
                     if (running) {
                         stopTicketHandling();
@@ -103,7 +102,7 @@ public class Main {
                     }
                     break;
                 default:
-                    System.out.println("Invalid command. Please enter start/stop.");
+                    System.out.println("Invalid command. Please enter 'start' or 'stop'.");
             }
         }
     }
@@ -115,7 +114,7 @@ public class Main {
         for (Thread customerThread : customerThreads) {
             customerThread.start();
         }
-        System.out.println("System started.");
+        System.out.println("---System started---");
     }
 
     private static void stopTicketHandling() {
@@ -125,6 +124,6 @@ public class Main {
         for (Thread customerThread : customerThreads) {
             customerThread.interrupt();
         }
-        System.out.println("System stopped.");
+        System.out.println("---System stopped---");
     }
 }
